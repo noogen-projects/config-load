@@ -1,7 +1,15 @@
 [package]
 name = "config-load"
 version = "0.1.0"
+authors = ["Aleksandr Mescheriakov <freecoder.xx@gmail.com>"]
 edition = "2024"
+license = "MIT"
+description = "Conditional configuration loader for Rust applications that use the `config` crate."
+readme = "README.md"
+documentation = "https://docs.rs/config-load"
+repository = "https://github.com/noogen-projects/config-load"
+keywords = ["config", "configuration", "settings", "loader"]
+categories = ["config"]
 
 [dependencies]
 config = "0.15"
