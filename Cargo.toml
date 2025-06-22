@@ -1,6 +1,6 @@
 [package]
 name = "config-load"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Aleksandr Mescheriakov <freecoder.xx@gmail.com>"]
 edition = "2024"
 license = "MIT"
