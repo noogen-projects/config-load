@@ -48,7 +48,7 @@ use std::marker::PhantomData;
 use std::path::PathBuf;
 
 pub use config;
-use config::builder::{BuilderState, DefaultState};
+use config::builder::{AsyncState, BuilderState, DefaultState};
 use config::{Config, ConfigBuilder, ConfigError};
 use either::Either;
 
@@ -61,7 +61,7 @@ pub mod location;
 
 pub type Result<T> = std::result::Result<T, ConfigError>;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Clone)]
 pub struct ConfigLoader<S: BuilderState = DefaultState> {
     config_paths: Vec<PathBuf>,
     _state: PhantomData<S>,
@@ -89,7 +89,17 @@ impl<S: BuilderState> ConfigLoader<S> {
     }
 }
 
+impl Default for ConfigLoader<DefaultState> {
+    fn default() -> Self {
+        Self::new_default()
+    }
+}
+
 impl ConfigLoader<DefaultState> {
+    pub fn new_default() -> Self {
+        Self::new()
+    }
+
     pub fn builder(self) -> ConfigBuilder<DefaultState> {
         let mut config_builder = Config::builder();
         for path in self.config_paths {
@@ -99,6 +109,25 @@ impl ConfigLoader<DefaultState> {
     }
 
     pub fn load<T: Load<DefaultState>>(self) -> Result<T> {
+        let config_builder = self.builder();
+        T::load(config_builder)
+    }
+}
+
+impl ConfigLoader<AsyncState> {
+    pub fn new_async() -> Self {
+        Self::new()
+    }
+
+    pub fn builder(self) -> ConfigBuilder<AsyncState> {
+        let mut config_builder = ConfigBuilder::<AsyncState>::default();
+        for path in self.config_paths {
+            config_builder = config_builder.add_source(config::File::from(path))
+        }
+        config_builder
+    }
+
+    pub fn load<T: Load<AsyncState>>(self) -> Result<T> {
         let config_builder = self.builder();
         T::load(config_builder)
     }
